@@ -17,7 +17,8 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->word(),   // one word category name
+            'content' => $this->faker->sentence(), // short description
         ];
     }
 }

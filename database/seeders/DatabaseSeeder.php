@@ -33,6 +33,12 @@ class DatabaseSeeder extends Seeder
             'is_admin' => false,
         ]
     );
+
+    // Seed categories first
+        $this->call(CategorySeeder::class);
+
+        // Then seed posts
+        $this->call(PostSeeder::class);
     
         // User::factory(10)->create();
 
