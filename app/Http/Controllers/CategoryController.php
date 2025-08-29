@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     // Show all categories
     public function index()
     {
-        $categories = Category::latest()->paginate(10);
+        $categories = Category::all();
         return view('categories.index', compact('categories'));
     }
 
@@ -20,6 +20,18 @@ class CategoryController extends Controller
         return view('categories.create');
     }
 
+    // Store a new category
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:50|unique:categories,name',
+        ]);
+
+        Category::create(['name' => $request->name]);
+
+        return redirect()->route('categories.all')->with('success', 'Category created successfully!');
+    }
+
     // Show edit form
     public function edit($id)
     {
@@ -27,36 +39,25 @@ class CategoryController extends Controller
         return view('categories.edit', compact('category'));
     }
 
-    // Handle create & update
-    public function save(Request $request)
+    // Update existing category
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|max:50',
-            'content' => 'nullable|string',
+            'name' => 'required|max:50|unique:categories,name,' . $id,
         ]);
 
-        if ($request->id) {
-            $category = Category::findOrFail($request->id);
-            $category->update([
-                'name' => $request->name,
-                'content' => $request->content,
-            ]);
-        } else {
-            Category::create([
-                'name' => $request->name,
-                'content' => $request->content,
-            ]);
-        }
+        $category = Category::findOrFail($id);
+        $category->update(['name' => $request->name]);
 
-        return redirect()->route('admin.categories.all')->with('success', 'Category saved successfully!');
+        return redirect()->route('categories.all')->with('success', 'Category updated successfully!');
     }
 
-    // Delete category
+    // Delete a category
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('admin.categories.all')->with('success', 'Category deleted successfully!');
+        return redirect()->route('categories.all')->with('success', 'Category deleted successfully!');
     }
 }

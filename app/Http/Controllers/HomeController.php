@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,15 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+   // HomeController.php
+ // Show dashboard with posts
     public function index()
     {
-        return view('home');
+        // Fetch posts with category relationship
+        $posts = Post::with('category')->latest()->get();
+
+        // Pass to home.blade.php
+        return view('home', compact('posts'));
     }
+
 }
